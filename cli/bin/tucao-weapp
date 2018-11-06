@@ -1,0 +1,54 @@
+#!/usr/bin/env node
+
+const program = require('commander');
+const {spawn} = require('child_process');
+const ls = spawn('ls', ['-lh', '/usr']);
+const path = require('path');
+const fs = require('fs');
+const _ = require('lodash');
+const buildPluginJson = require('../util/build-plugin-json');
+const fsPromise = fs.promise;
+
+const watchApp = require('../util/watch');
+
+function rootPath(strings, personExp, ageExp){
+  return path.join(process.cwd(), Array.isArray(strings) ? strings[0] : strings);
+}
+
+path.rootPath = rootPath;
+
+const config = require(rootPath`./config/index`)(_.merge);
+
+const {
+  sourceRoot,
+  outputRoot
+} = config;
+
+watchApp(rootPath(outputRoot));
+buildPluginJson(rootPath(sourceRoot), rootPath(outputRoot));
+debugger;
+
+program
+.option('--type [typeName]', 'Build type, weapp/rn/h5')
+.option('--watch', 'Watch mode')
+.option('--env [env]', 'Env type')
+.option('--ui', 'Build Taro UI library')
+.parse(process.argv);
+
+function taroBuild(){
+  const build = spawn('taro', program.args);
+
+  build.stdout.on('data', function(data){
+    console.log(data.toString());
+  });
+  build.stderr.on('data', function(data){
+    console.log('stderr: ' + data);
+  });
+}
+
+const taroConfig = {};
+
+function genConfig(){
+
+}
+
