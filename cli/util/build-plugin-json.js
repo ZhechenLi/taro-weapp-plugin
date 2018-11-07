@@ -3,12 +3,11 @@
  */
 const path = require('path');
 const fs = require('fs');
-const babel = require('@babel/core');
 const parse = require('@babel/parser').parse;
 const traverse = require('@babel/traverse').default;
 const t = require('@babel/types');
 
-module.exports = function(PATH, OUTPUT_PATH){
+module.exports = function buildPluginJson(PATH, OUTPUT_PATH){
 	const code = fs.readFileSync(path.join(PATH, './app.js'));
 	const ast = parse(code.toString(), {
 		sourceType: 'module',
@@ -37,10 +36,39 @@ module.exports = function(PATH, OUTPUT_PATH){
 			}
 		}
 	});
+	/**
+	 * 插件的 page 选项需要指定名称
+	 * */
+
+	configObj.pages = getPageName(configObj.pages);
 
 	fs.writeFileSync(path.join(OUTPUT_PATH, './plugin.json'), JSON.stringify(configObj, null, 4));
 
 };
+
+/**
+ * 将 ['pages/faq/index'] 转换成 {faq: 'pages/faq/index'}
+ * 为了兼容普通小程序还是在这里做一个转换吧
+ * @params pages{Array} pages 列表
+ * @return {Array} 一个符合插件的 pages 列表
+ * */
+function getPageName(pages = []){
+
+	if(!Array.isArray(pages)) return pages;
+
+	const pageFormat = {};
+
+	pages.forEach(e=>{
+		let key = e.split('/').slice(-1)[0];
+		if(key === 'index'){
+			key = e.split('/').slice(-2, -1)[0];
+		}
+		pageFormat[key] = e;
+
+	});
+
+	return pageFormat;
+}
 
 function traverseObjectNode(node, obj){
 
