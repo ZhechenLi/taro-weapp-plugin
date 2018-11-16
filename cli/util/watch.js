@@ -15,25 +15,15 @@ function shouldBeDelete(name){
 	return !!name.match(/app\.(js(on)*|(wx|le|c|sc)ss)/);
 }
 
-module.exports = function(output){
+module.exports = function deleteBasenameStartAtApp(output){
+
+
 	fs.readdirSync(output).forEach(e=>{
 		if(shouldBeDelete(e)){
 			fs.unlinkSync(path.join(output, e));
 		}
 	});
 
-	fs.watch(
-		output,
-		{recursive: true},
-		(eventType, filename)=>{
-			const PATH = path.join(output, filename);
-			const IS_NEW = eventType === 'rename' && fs.existsSync(PATH);
-			const SHOULD_BE_DELETE = shouldBeDelete(path.basename(filename));
 
-			if(IS_NEW && SHOULD_BE_DELETE){
-				fs.unlinkSync(PATH);
-			}
-		}
-	);
 
 };
