@@ -36,11 +36,15 @@ module.exports = function buildPluginJson(PATH, OUTPUT_PATH){
 			}
 		}
 	});
+
 	/**
 	 * 插件的 page 选项需要指定名称
 	 * */
-
 	configObj.pages = getPageName(configObj.pages);
+	if(fs.existsSync(path.join(OUTPUT_PATH, './index.js'))){
+		// TODO: 先写死吧
+		configObj.main = 'index.js';
+	}
 
 	fs.writeFileSync(path.join(OUTPUT_PATH, './plugin.json'), JSON.stringify(configObj, null, 4));
 
@@ -70,6 +74,10 @@ function getPageName(pages = []){
 	return pageFormat;
 }
 
+/**
+ * copy from taro
+ * 用于解析 config
+ * */
 function traverseObjectNode(node, obj){
 
 	if(node.type === 'ClassProperty' || node.type === 'ObjectProperty'){

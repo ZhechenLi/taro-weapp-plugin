@@ -2,7 +2,7 @@
  * Created by v_sameli on 2018/11/7.
  */
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 
 exports.rootPath = function rootPath(strings = [], ...args){
 	return path.join(process.cwd(), Array.isArray(strings) ? strings[0] : strings);
@@ -21,23 +21,21 @@ exports.copySpecificDir = function copySpecificDir(src, dest){
 		return;
 	}
 
-	if(!fs.existsSync(dest)){
-		fs.mkdirSync(dest);
-	}
-
-	let stack = fs.readdirSync(src).map(e=>path.join(src, e));
+	let stack = [src];
 
 	while(stack.length > 0){
 		const CURRENT_PATH = stack.pop();
+		const TARGET_PATH = path.join(dest, path.relative(src, CURRENT_PATH));
 
-		if(!fs.existsSync(CURRENT_PATH)){
-			fs.mkdirSync(CURRENT_PATH);
-		}
 		if(fs.statSync(CURRENT_PATH).isDirectory()){
-			stack = [...stack, ...fs.readdirSync(CURRENT_PATH).map(e=>path.join(CURRENT_PATH, e))];
+			const temp = fs.readdirSync(CURRENT_PATH).map(e=>path.join(CURRENT_PATH, e));
+			// 发现目录后，遍历目录下所有文件并入栈，
+			stack = stack.concat(temp);
+			// 确保目录存在
+			fs.ensureDirSync(TARGET_PATH);
 		}else{
-			console.log(`复制 ${CURRENT_PATH} -> ${path.join(dest, path.relative(src, CURRENT_PATH))}`);
-			fs.copyFileSync(CURRENT_PATH, path.join(dest, path.relative(src, CURRENT_PATH)));
+			console.log(`复制 ${CURRENT_PATH} -> ${TARGET_PATH}`);
+			fs.copyFileSync(CURRENT_PATH, TARGET_PATH);
 		}
 	}
 };

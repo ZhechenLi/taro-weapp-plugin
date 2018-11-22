@@ -10,6 +10,4 @@ program
 .option('-u, --ui', 'Build Taro UI library')
 .parse(process.argv);
 
-buildWeAppPlugin();
-
-
+buildWeAppPlugin(program);

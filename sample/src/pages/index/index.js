@@ -6,21 +6,21 @@ import { add, minus, asyncAdd } from '../../actions/counter'
 
 import './index.scss'
 
-// import MyButton from '../../component/MyButton'
+import MyButton from '../../component/MyButton'
 import List from '../../component/List'
 
 import './temp.jpg'
 
-class MyButton extends Component {
+// class MyButton extends Component {
 
-  render() {
-    return (
-      <View>
-        I'm ComponentA ?????
-      </View>
-    )
-  }
-}
+//   render() {
+//     return (
+//       <View>
+//         I'm ComponentA ?????
+//       </View>
+//     )
+//   }
+// }
 
 @connect(({ counter }) => ({
   counter
@@ -52,7 +52,7 @@ class Index extends Component {
 
     return (
       <View className='index'>
-        <MyButton onClick={this.props.onClick} name="卧底">
+        {/* <MyButton onClick={this.props.onClick} name="卧底">
           <Text>对不起</Text>
           <Text>我是差佬</Text>
         </MyButton>
@@ -62,11 +62,11 @@ class Index extends Component {
         }, {
           key: 'b',
           value: 'a'
-        }]}></List>
-        <Button className='add_btn' onClick={this.props.add}>+</Button>
+        }]}></List> */}
+        {/* <Button className='add_btn' onClick={this.props.add}>+</Button>
         <Button className='dec_btn' onClick={this.props.dec}>-</Button>
-        <Button className='dec_btn' onClick={this.props.asyncAdd}>async</Button>
-        <View><Text>{this.props.counter.num}</Text></View>
+        <Button className='dec_btn' onClick={this.props.asyncAdd}>async</Button> */}
+        {/* <View><Text>{this.props.counter.num}</Text></View> */}
         <View><Text>Hello, World</Text></View>
       </View>
     )
