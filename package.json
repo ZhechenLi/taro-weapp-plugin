@@ -6,15 +6,29 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "cli": "bin/build"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ZhechenLi/taro-weapp-plugin.git"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ZhechenLi/taro-weapp-plugin/issues"
   },
-  "homepage": "https://github.com/ZhechenLi/taro-weapp-plugin#readme"
+  "homepage": "https://github.com/ZhechenLi/taro-weapp-plugin#readme",
+  "dependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/traverse": "^7.1.4",
+    "@tarojs/cli": "^1.1.4",
+    "chokidar": "^2.0.4",
+    "commander": "^2.19.0",
+    "fs-extra": "^7.0.1",
+    "immer": "^1.7.4",
+    "lodash": "^4.17.11",
+    "@babel/helpers": "^7.1.2"
+  }
 }

@@ -412,3 +412,79 @@ plugin index 打包
 
 
 
+## 插件兼容
+
+插件的兼容主要考虑以下几个因素：
+
+目录结构不同，需要有对应的 miniProgram 和 doc，plugin 目录，且配置文件的位置也不同。
+
+一些多余的配置会导致插件出现异常，如：出现在 plugin 目录中的 app.json，app.js 会导致无法跳转，project.config.json 需要在根目录而不是在 plugin 目录，
+
+需要生成 plugin.json ，虽然结构类似 app.json，但是有些字段是不同的。
+
+alias 
+
+在不动源码的情况实现 alias 有点难度且效率不是很高，因为 taro 会前置判断所有的绝对路径包名并自作主张地帮你下载...
+
+
+
+在子进程中执行 taro，标准输出高亮
+
+有时你需要将 taro 封装到自己的脚本中，这时候你可能会用类似下面的代码来实现：
+
+```js
+const {spawn} = require('child_process');
+const cp = spawn(
+    'taro',
+    [...process.argv.slice(process.argv.findIndex(e=>e === 'build'))],
+);
+
+cp.stdout.on('data', data=>{
+    console.log(data);
+});
+```
+
+然后你就会发现 taro 原本实现的高亮消失了
+
+![image-20181122193301645](/Users/tsesamli/Library/Application Support/typora-user-images/image-20181122193301645.png)
+
+before
+
+![image-20181122193350138](/Users/tsesamli/Library/Application Support/typora-user-images/image-20181122193350138.png)after
+
+一般这种情况是因为 chalk 的判断，chalk 会通过 process.stdout.isTTY 来判断是否运行在一个 TTY 下。在使用 child_process 相关的接口执行一个子进程时 process.stdout.isTTY 为 undefined（具体为啥会这样还请大神指教）。
+
+经笔者实践最简单的方式就是设置一个环境变量 FORCE_COLOR="true" 就完事了，具体为啥可以看 [**chalk/supports-color**](https://github.com/chalk/supports-color/blob/master/index.js#L41)。
+
+```js
+const {spawn} = require('child_process');
+
+process.env.FORCE_COLOR = 'true';
+const cp = spawn(
+    'taro',
+    [...process.argv.slice(process.argv.findIndex(e=>e === 'build'))],
+);
+
+cp.stdout.on('data', data=>{
+    console.log(data);
+});
+```
+
+> 网上还流行两种方案，分别是设置 stdio 和 process.argv 中带上 '--color' 参数，代码如下：
+>
+> ```js
+> // 设置 stdio 为 inherit
+> const cp = spawn(
+>     'taro',
+>     [...process.argv.slice(process.argv.findIndex(e=>e === 'build'))],
+>     {stdio: 'inderit'}
+> );
+> 
+> // 带上 --color 参数
+> const cp = spawn(
+>     'taro',
+>     [...process.argv.slice(process.argv.findIndex(e=>e === 'build')), '--color'],
+> );
+> ```
+>
+> 前者的弊端是父进程无法操作子进程的 stdout，后者在 taro 中根本跑不通

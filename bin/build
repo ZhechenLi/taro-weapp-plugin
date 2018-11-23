@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 const program = require('commander');
-const buildWeAppPlugin = require('../src/build-weapp-plugin');
+const buildWeAppPlugin = require('../lib/build-weapp-plugin');
+const buildWeappWithTaro = require('../lib/build-weapp-with-taro');
 
 program
 .option('-t,--type [typeName]', 'Build type, weapp/rn/h5 [weapp]', 'weapp')
