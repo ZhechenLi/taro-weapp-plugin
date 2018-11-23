@@ -1,0 +1,12 @@
+{
+  "pages": [
+    "pages/index/index"
+  ],
+  "plugins": {
+    "tucao": {
+      "version": "dev",
+      "provider": "wx8abaf00ee8c3202e"
+    }
+  },
+  "functionalPages": true
+}

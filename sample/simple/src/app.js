@@ -1,6 +1,6 @@
 import '@tarojs/async-await';
-import Taro, {Component} from '@tarojs/taro';
-import {Provider} from '@tarojs/redux';
+import Taro, { Component } from '@tarojs/taro';
+import { Provider } from '@tarojs/redux';
 
 import Index from './pages/index';
 
@@ -10,7 +10,7 @@ import './app.scss';
 
 const store = configStore();
 
-class App extends Component{
+class App extends Component {
 
   config = {
     pages: [
@@ -19,29 +19,29 @@ class App extends Component{
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'WeChat',
-      navigationBarTextStyle: 'black'
+      navigationBarTitleText: 'WeChat'
+      // navigationBarTextStyle: 'black'
     }
   };
 
-  componentDidMount(){
+  componentDidMount() {
   }
 
-  componentDidShow(){
+  componentDidShow() {
   }
 
-  componentDidHide(){
+  componentDidHide() {
   }
 
-  componentCatchError(){
+  componentCatchError() {
   }
 
-  componentDidCatchError(){
+  componentDidCatchError() {
   }
 
   // 在 App 类中的 render() 函数没有实际作用
   // 请勿修改此函数
-  render(){
+  render() {
     return (
       <Provider store={store}>
         <Index/>

@@ -1,0 +1,1 @@
+../../sample/simple/config/prod.js

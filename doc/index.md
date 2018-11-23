@@ -488,3 +488,6 @@ cp.stdout.on('data', data=>{
 > ```
 >
 > 前者的弊端是父进程无法操作子进程的 stdout，后者在 taro 中根本跑不通
+
+
+
