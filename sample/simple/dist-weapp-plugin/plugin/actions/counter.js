@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.minus=exports.add=void 0,exports.asyncAdd=asyncAdd;var _counter=require("../constants/counter.js"),add=exports.add=function(){return{type:_counter.ADD}},minus=exports.minus=function(){return{type:_counter.MINUS}};function asyncAdd(){return function(e){setTimeout(function(){e(add())},2e3)}}

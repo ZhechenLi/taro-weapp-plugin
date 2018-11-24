@@ -15,8 +15,8 @@
     "dev:h5": "npm run build:h5 -- --watch",
     "dev:rn": "npm run build:rn -- --watch",
     "dev:cli": "node --inspect-brk ../../bin/build build --type weapp --watch",
-    "build:plugin": "node ../../bin/build build --type weapp",
-    "dev:plugin": "TYPE=weapp-plugin npm run build:weapp -- --watch",
+    "build:plugin": "node --inspect-brk ../../bin/build build --type weapp",
+    "dev:plugin": "TYPE=weapp-plugin npm run build:plugin -- --watch",
     "dev:taro": "node --inspect-brk ./node_modules/@tarojs/cli/bin/taro-build --type weapp --watch"
   },
   "author": "",

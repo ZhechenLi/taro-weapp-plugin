@@ -1,0 +1,13 @@
+<block>
+    <view class="index">
+        <button class="add_btn" bindtap="funPrivateszbfy">+</button>
+        <button class="dec_btn" bindtap="funPrivatenUARq">-</button>
+        <button class="dec_btn" bindtap="funPrivateMHaiO">async</button>
+        <view>
+            <text>{{counter.num}}</text>
+        </view>
+        <view>
+            <text>Hello, World</text>
+        </view>
+    </view>
+</block>

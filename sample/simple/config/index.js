@@ -1,6 +1,5 @@
 // 因为 taro 在构建非 h5 目标的时候会先清空目标目录，所以建议普通小程序和小程序插件不要放在一个文件内
 const outputRoot = process.env.TYPE === 'weapp' ? 'dist-weapp' : 'dist-weapp-plugin/plugin';
-console.log('process.env.TYPE', process.env.TYPE);
 
 const config = {
   'projectName': 'simple',

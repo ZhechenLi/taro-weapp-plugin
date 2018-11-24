@@ -21,8 +21,12 @@ class App extends Component {
       navigationBarBackgroundColor: '#fff',
       navigationBarTitleText: 'WeChat'
       // navigationBarTextStyle: 'black'
-    }
+    },
+    main: 'index.js',
+    doc: '../assets/'
   };
+
+
 
   componentDidMount() {
   }
