@@ -342,7 +342,9 @@ render(){
 
 
 
-##### 在非 H5 打包的情况下，Taro 每次打包都会清空目标文件夹。
+##### 在非 H5 打包的情况下，Taro 每次打包都会清空 dist 文件夹。
+
+而且这个逻辑是写死的，所以在输出多个目标的时候建议 使用另外一个文件夹比如 temp 之类的
 
 ![image-20181115145822193](/Users/tsesamli/Library/Application Support/typora-user-images/image-20181115145822193.png)
 
@@ -491,3 +493,6 @@ cp.stdout.on('data', data=>{
 
 
 
+子目录中不要包含其他命名为 app.* 的文件
+
+当子目录中含有 app.* 会触发app.js 的修改

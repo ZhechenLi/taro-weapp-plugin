@@ -4,7 +4,7 @@
   "private": true,
   "description": "simple",
   "scripts": {
-    "build:weapp": "taro build --type weapp",
+    "build:weapp": "TYPE=weapp taro build --type weapp  --color",
     "build:swan": "taro build --type swan",
     "build:alipay": "taro build --type alipay",
     "build:h5": "taro build --type h5",
@@ -14,9 +14,9 @@
     "dev:alipay": "npm run build:alipay -- --watch",
     "dev:h5": "npm run build:h5 -- --watch",
     "dev:rn": "npm run build:rn -- --watch",
-    "dev:cli": "node --inspect-brk ../../bin/build build --type weapp --watch",
-    "build:plugin": "node --inspect-brk ../../bin/build build --type weapp",
-    "dev:plugin": "TYPE=weapp-plugin npm run build:plugin -- --watch",
+    "dev:cli": "TYPE=weapp node --inspect-brk ./node_modules/@tarojs/cli/bin/taro-build --type weapp",
+    "build:plugin": "TYPE=weapp-plugin node --inspect-brk ../../bin/build build --type weapp",
+    "dev:plugin": "npm run build:plugin -- --watch",
     "dev:taro": "node --inspect-brk ./node_modules/@tarojs/cli/bin/taro-build --type weapp --watch"
   },
   "author": "",

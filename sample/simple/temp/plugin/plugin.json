@@ -1,0 +1,6 @@
+{
+    "main": "index.js",
+    "pages": {
+        "index": "pages/index/index"
+    }
+}
