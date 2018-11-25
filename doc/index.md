@@ -32,23 +32,21 @@
 
 #### 2. 为什么我最终选择了 Taro
 
-其实一开始并没有想太多，对于我来说框架只要比原生好用就行没什么追求（毕竟被小程序荼毒已久）。
+其实一开始并没有想太多，对于我来说框架只要比原生好用就行没什么追求（毕竟被小程序荼毒已久）。当然也不是说小程序原生的写法就不好,如果你把小程序当作是一个独立的平台,有专门的开发团队来维护,其实问题是不大的,只是当你需要同时维护多个项目时,这种技术栈的脱节非常影响你的开发效率.
 
 > 笔者并不止维护吐槽小程序这一个项目，所以时隔数月后再看回小程序“落后”的写法后感觉十分的心累...
 
-起初大部分小程序框架都是以 vue 作为模板来开发的，虽然个人并不排斥 vue，但是如果能用 React 来开发小程序那是最吼的啦。
+起初大部分小程序框架都是以 vue 作为模板来开发的，虽然个人并不排斥 vue，但是就像我前面说的,跨技术栈的开发对于开发效率其实是有负面影响的,当然如果你人力充足技术过硬玩一下还是没问题的(悄悄说)
 
-> 用正妹大大的话来说就是对使用 React 栈的同学来说不公平
+所以笔者的目光就瞄向了以 React 技术栈为主的小程序框架,彼时进入我法眼的主要有两个框架: Taro 和 nanachi。
 
-类 React 的库比较靠谱的有 Taro 和 nanachi。
+Taro 的开发团队 O2 也不算平平无奇，早在去年前端体验大会上就听他们团队的成员在介绍 Nerv，也是业界小有名气的项目，Taro 的 web 层运行时就是 Nerv(猜的,不知道有没有魔改)。
 
-Taro 的开发团队 O2 也算是我们部门的友军了，早在去年前端体验大会上就听他们团队的成员在介绍 Nerv，也是业界小有名气的项目，Taro 的 web view层的运行时就是 Nerv（emmm，web 的 view？）。
-
-nanachi 来自去哪儿 TMFE 团队，目前还是作为 anujs 的一部分，给人感觉还是个半成品，就不考虑了。
-
-> anujs 的作者大家应该都认识吧~
+nanachi 来自去哪儿 TMFE 团队，目前还是作为 anujs 的一部分，虽然正美大大吹得天花乱坠,但给人感觉还在填坑中，出于风险考虑就先不去试水了。
 
 再加上以后可能会有跟 Taro 的合作，所以 Taro 的优先级排到了最高，花了点时间简单试了一下 demo 以及体验了一些基本用法。语法大部分都能兼容，集成了工作流，能自己拓展 babel 插件，预估能满足小程序开发的需求，就开始动手干了。
+
+> 看了一下源码也还在掌控中,实在不行就魔改吧
 
 
 
@@ -76,11 +74,11 @@ npx @tarojs/cli init sample
 
  根据提示输入对应的选项，这是笔者的配置：
 
-![image-20181112200511339](/Users/tsesamli/Library/Application Support/typora-user-images/image-20181112200511339.png)
+![image-20181112200511339](image-20181112200511339.png)
 
 然后你会发现当前目录多了一个新的 sample 目录，结构如下：
 
-![image-20181112201809920](/Users/tsesamli/Library/Application Support/typora-user-images/image-20181112201809920.png)
+![image-20181112201809920](image-20181112201809920.png)
 
 执行下面的语句，然后 taro 就会将我们的代码转换成能够在小程序环境下运行的代码了。
 ```shell
@@ -90,11 +88,11 @@ npm run dev:weapp
 
 生成的代码在 /dist 目录下：
 
-![image-20181112201938992](/Users/tsesamli/Library/Application Support/typora-user-images/image-20181112201938992.png)
+![image-20181112201938992](image-20181112201938992.png)
 
 用小程序开发工具打开这个目录，可以看到我们的 demo 顺利地跑起来了。
 
-![image-20181112202132162](/Users/tsesamli/Library/Application Support/typora-user-images/image-20181112202132162.png)
+![image-20181112202132162](image-20181112202132162.png)
 
 其余的用法基本上就是按照 React 开发 web 应用的习惯来进行即可。
 
@@ -260,13 +258,13 @@ class Index extends Component {
 
 emmmm, 由于 Taro 并没有对其做特殊处理，所以 JSX 会被处理成 React.createElement(...)  的形式（捂脸）
 
-![image-20181116130959199](/Users/tsesamli/Library/Application Support/typora-user-images/image-20181116130959199.png)
+![image-20181116130959199](image-20181116130959199.png)
 
 所以还是建议大家还是养成一个文件一个组件的习惯吧，虽然不知道官方什么时候会调整。
 
 如果有折腾党坚持要将组件和入口组件写在一起，可以尝试下修改源码中的 Transformer#customComponents，格式如下：
 
-![image-20181116132041396](/Users/tsesamli/Library/Application Support/typora-user-images/image-20181116132041396.png)
+![image-20181116132041396](image-20181116132041396.png)
 
 
 
@@ -346,7 +344,7 @@ render(){
 
 而且这个逻辑是写死的，所以在输出多个目标的时候建议 使用另外一个文件夹比如 temp 之类的
 
-![image-20181115145822193](/Users/tsesamli/Library/Application Support/typora-user-images/image-20181115145822193.png)
+![image-20181115145822193](image-20181115145822193.png)
 
 ##### 我自己用脚本生成的文件不见了
 
@@ -448,11 +446,11 @@ cp.stdout.on('data', data=>{
 
 然后你就会发现 taro 原本实现的高亮消失了
 
-![image-20181122193301645](/Users/tsesamli/Library/Application Support/typora-user-images/image-20181122193301645.png)
+![image-20181122193301645](image-20181122193301645.png)
 
 before
 
-![image-20181122193350138](/Users/tsesamli/Library/Application Support/typora-user-images/image-20181122193350138.png)after
+![image-20181122193350138](image-20181122193350138.png)after
 
 一般这种情况是因为 chalk 的判断，chalk 会通过 process.stdout.isTTY 来判断是否运行在一个 TTY 下。在使用 child_process 相关的接口执行一个子进程时 process.stdout.isTTY 为 undefined（具体为啥会这样还请大神指教）。
 
@@ -496,3 +494,56 @@ cp.stdout.on('data', data=>{
 子目录中不要包含其他命名为 app.* 的文件
 
 当子目录中含有 app.* 会触发app.js 的修改
+
+
+
+组件生命周期
+
+纯组件的生命周期
+
+页面生命周期
+
+app 和 page 的生命周期, 页面也能用 Component 构造器来定义,区别是页面多了一些普通组件没有的生命周期钩子.同理 app
+
+![image-20181125221125910](/Volumes/文稿/code/taro-weapp-plugin/doc/assets/image-20181125221125910.png)
+
+映射关系
+
+onLaunch | componentWillMount & componentDidMount
+
+onShow | componentDidShow
+
+onHide | componentDidHide
+
+onError | componentDidCatchError
+
+onPageNotFound | componentDidNotFound
+
+
+
+因为在小程序中不设置 DOM 操作,或者说 taro 会忽略所有在 app.js 中的操作,所以 WillMount 和 DidMount 的时机在 app 中是一致的.
+
+值得一提的是,页面启动参数 options 被重新定义成 this.$router.params
+
+![image-20181125221413470](/Volumes/文稿/code/taro-weapp-plugin/doc/assets/image-20181125221413470.png)
+
+换句话说,想要取到启动参数只要像这样.
+
+不过这样也有好处就是其他钩子也能获取到启动参数了,虽然可能不利于测试但是小程序稿测试 exo
+
+值得一提的是, app#mainClass 中的 render 函数是没有被用到的,所以尽可能不要在这里写业务逻辑,这里的代码都会被忽略.除非一些特殊情况,比如使用 @tarojs/redux#Provider 
+
+![image-20181125221950502](/Volumes/文稿/code/taro-weapp-plugin/doc/assets/image-20181125221950502.png)
+
+虽然 render 方法里面的代码不会被执行,可是 taro 在进行代码转换的时候会去识别这个代码结构, 当识别到
+
+时会在当前文件中添加这样一句代码
+
+![image-20181125222219029](/Volumes/文稿/code/taro-weapp-plugin/doc/assets/image-20181125222219029.png)
+
+
+
+
+
+
+

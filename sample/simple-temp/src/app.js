@@ -24,13 +24,22 @@ class App extends Component {
     }
   }
 
-  componentDidMount() {
-    console.log(this.$router.params)
+  componentWillMount() {
+    console.log(this.$router.params);
   }
+
+
+
+  globalData = 'I am global data'
+
+  // componentDidMount() {
+  //   console.log(this.$router.params)
+  // }
 
   // 在 App 类中的 render() 函数没有实际作用
   // 请勿修改此函数
   render() {
+    console.log(this.$router.params);
     return (
       <Provider store={store}>
         <Index />
