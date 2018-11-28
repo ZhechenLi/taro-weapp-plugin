@@ -12,5 +12,6 @@
 		"minified": false,
 		"newFeature": true
 	},
+	"libVersion": "2.4.0",
 	"condition": {}
 }
