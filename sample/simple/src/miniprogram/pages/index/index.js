@@ -26,8 +26,8 @@ const CONSTANT = {
   ],
   PARAMS_STATIC: {
     avatar: 'https://tucao.qq.com/static/desktop/img/products/def-product-logo.png',
-    entries: ['home', 'post-detail'],
-    entry: 'home',
+    entries: ['home', 'post-detail', 'index'],
+    entry: 'index',
     productId: '1368',
     debug: true,
     SDKVersion
