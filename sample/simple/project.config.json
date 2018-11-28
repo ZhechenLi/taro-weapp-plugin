@@ -1,0 +1,17 @@
+{
+	"miniprogramRoot": "temp/miniprogram/",
+	"pluginRoot": "temp/plugin/",
+	"compileType": "plugin",
+	"projectname": "simple",
+	"description": "simple",
+	"appid": "wx8abaf00ee8c3202e",
+	"setting": {
+		"urlCheck": true,
+		"es6": false,
+		"postcss": false,
+		"minified": false,
+		"newFeature": true
+	},
+	"libVersion": "2.4.0",
+	"condition": {}
+}
