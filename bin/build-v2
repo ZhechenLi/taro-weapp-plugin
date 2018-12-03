@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
 const program = require('commander');
-const buildProject = require('../lib/build_project');
+const buildProject = require('../lib/build-project').default;
 
 
 program
-.option('-t,--type [typeName]', 'Build type, weapp/rn/h5 [weapp]', 'weapp')
-.option('-w, --watch', 'Watch mode')
-.option('-e, --env [env]', 'Env type')
-.option('-u, --ui', 'Build Taro UI library')
-.parse(process.argv);
+    .option('-t,--type [typeName]', 'Build type, weapp/rn/h5 [weapp]', 'weapp')
+    .option('-w, --watch', 'Watch mode')
+    .option('-e, --env [env]', 'Env type')
+    .option('-u, --ui', 'Build Taro UI library')
+    .option('-c, --clean', 'Build Taro UI library')
+    .parse(process.argv);
 
 /**
  * 1. 同一份代码根据 config 生成两个项目目录，分别对应 weapp ,weapp-plugin
@@ -18,4 +19,3 @@ program
 
 
 buildProject(program)
-

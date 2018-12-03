@@ -1,0 +1,39 @@
+{
+  "projectname": "sample-temp",
+  "description": "微信插件 with taro",
+  "appid": "wx8abaf00ee8c3202e",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": false,
+    "minified": false,
+    "newFeature": true
+  },
+  "condition": {
+    "search": {
+      "current": -1,
+      "list": []
+    },
+    "conversation": {
+      "current": -1,
+      "list": []
+    },
+    "plugin": {
+      "current": -1,
+      "list": []
+    },
+    "game": {
+      "list": []
+    },
+    "miniprogram": {
+      "current": 0,
+      "list": [{
+        "id": -1,
+        "name": "simple",
+        "pathName": "pages/index/index",
+        "query": "a=b",
+        "scene": "1006"
+      }]
+    }
+  }
+}

@@ -24,8 +24,8 @@ const config = {
   },
   defineConstants: {
   },
-  weapp: {
-
+  weappPlugin: {
+    miniprogramRoot: 'src/assets/miniprogram'
   },
   h5: {
     publicPath: '/',
