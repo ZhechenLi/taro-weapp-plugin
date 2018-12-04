@@ -13,7 +13,8 @@ const EventEmitter = require('events');
 module.exports = function buildWeappWithTaro({
 	cwd = process.cwd(),
 	env,
-	stdio = 'pipe'
+	stdio = 'pipe',
+	dev = false
 } = {}) {
 
 	env = {

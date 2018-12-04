@@ -7,8 +7,8 @@ const config = {
     '750': 1,
     '828': 1.81 / 2
   },
-  sourceRoot: 'src',
-  outputRoot: 'temp',
+  sourceRoot: '../src',
+  outputRoot: '../temp/plugin',
   plugins: {
     babel: {
       sourceMap: true,

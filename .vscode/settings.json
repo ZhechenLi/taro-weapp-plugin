@@ -1,0 +1,6 @@
+{
+    "editor.formatOnSave": true,
+    "maven.executable.preferMavenWrapper": true,
+    "html.format.wrapLineLength": 240,
+    "editor.wordWrapColumn": 300,
+}
