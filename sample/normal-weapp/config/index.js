@@ -1,14 +1,9 @@
 const config = {
-  projectName: 'sample',
-  date: '2018-11-12',
+  projectName: 'normal-weapp',
+  date: '2018-12-7',
   designWidth: 750,
-  deviceRatio: {
-    '640': 2.34 / 2,
-    '750': 1,
-    '828': 1.81 / 2
-  },
   sourceRoot: 'src',
-  outputRoot: 'temp',
+  outputRoot: 'dist',
   plugins: {
     babel: {
       sourceMap: true,
@@ -21,18 +16,11 @@ const config = {
     }
   },
   defineConstants: {},
-  copy: {
-    patterns: [
-      // { from: './src/miniprogram', to: './temp/miniprogram' },
-      // { from: '../src/assets/doc', to: './temp/doc' },
-      // { from: '../src/index.js', to: './temp/plugin/index.js' }
-    ]
-  },
-  weapp: {},
-  weappPlugin: {
-    miniprogramRoot: 'src/assets/demo',
-    docRoot: 'src/assets/doc',
-    
+  weapp: {
+    npm: {
+      dir: 'abc',
+      name: 'npm'
+    }
   },
   h5: {
     publicPath: '/',
@@ -43,7 +31,7 @@ const config = {
           enable: true
         }
       }
-    } 
+    }
   }
 };
 

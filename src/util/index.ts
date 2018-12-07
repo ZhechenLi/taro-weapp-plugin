@@ -1,8 +1,8 @@
 /**
  * Created by v_sameli on 2018/11/7.
  */
-const path = require("path");
-const fs = require("fs-extra");
+const path = require('path');
+const fs = require('fs-extra');
 
 export function rootPath(strings = [], ...args) {
   return path.join(
@@ -55,4 +55,13 @@ export function RootShouldBeDelete(name, OUTPUT_PATH) {
     (!!path.basename(name).match(/app\.(js(on)*|(wx|le|c|sc)ss)/) ||
       !!path.basename(name).match(/project\.config\.json/))
   );
+}
+
+import _ from 'lodash';
+
+/**
+ * 从默认路径 cwd/config/index 中获取 config
+ */
+export function parseConfig() {
+  return require(path.join(process.cwd(), `./config/index`))(_.merge);
 }

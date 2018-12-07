@@ -43,11 +43,14 @@ export default function buildWeappWithTaro(
   const taroEmitter = new EventEmitter();
 
   if (dev) {
-    debugger;
     const cp = spawn(
       'node',
       // process.argv.slice(process.argv.findIndex(e => e === 'build')),
-      ['--inspect-brk', '@tarojs/cli/bin/taro-build', ...args],
+      [
+        '--inspect-brk=9221',
+        path.join(process.cwd(), './node_modules/@tarojs/cli/bin/taro-build'),
+        ...args
+      ],
       {
         cwd,
         env,
