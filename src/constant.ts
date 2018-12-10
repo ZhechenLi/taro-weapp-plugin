@@ -1,12 +1,13 @@
 import { pathExists } from 'fs-extra';
 import path from 'path';
 import { parseConfig } from './util';
-const config = parseConfig();
+
+export const config = parseConfig();
 
 /**
  * Created by v_sameli on 2018/11/21.
  */
-export default {};
+// export default {};
 
 const RELATIVE_PATH = {
   taroCwd: '.temp-weapp-plugin',

@@ -22,17 +22,16 @@ const config = {
   },
   defineConstants: {},
   copy: {
-    patterns: [
-      // { from: './src/miniprogram', to: './temp/miniprogram' },
-      // { from: '../src/assets/doc', to: './temp/doc' },
-      // { from: '../src/index.js', to: './temp/plugin/index.js' }
-    ]
+    patterns: []
   },
   weapp: {},
   weappPlugin: {
     miniprogramRoot: 'src/assets/demo',
     docRoot: 'src/assets/doc',
-    
+    mainRoot: 'src/index',
+    compile: {
+      main: true
+    }
   },
   h5: {
     publicPath: '/',
@@ -43,7 +42,7 @@ const config = {
           enable: true
         }
       }
-    } 
+    }
   }
 };
 

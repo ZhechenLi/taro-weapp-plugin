@@ -1,7 +1,7 @@
 <form>
   <picker id="entry" bindchange="onFormChange" value="{{0}}" range="{{entries}}">
     <view class="picker">
-      <label for="entry">需要跳转的页面: {{entry||"home"}}</label>
+      <label for="entry">需要跳转的页面: {{entry||"index"}}</label>
     </view>
   </picker>
   <label for="productId">产品 id</label>

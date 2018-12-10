@@ -1,4 +1,4 @@
-const Tucao = requirePlugin('tucao');
+const Tucao = requirePlugin('tucao').default;
 
 // Tucao 会从 this 中提取 wx 对象，用于简化接入方的接入逻辑
 // 如果开启了微信开发者工具的 ES5 转 ES6 会有异常,
@@ -25,9 +25,10 @@ const CONSTANT = {
     'getCookie'
   ],
   PARAMS_STATIC: {
-    avatar: 'https://tucao.qq.com/static/desktop/img/products/def-product-logo.png',
-    entries: ['home', 'post-detail'],
-    entry: 'home',
+    avatar:
+      'https://tucao.qq.com/static/desktop/img/products/def-product-logo.png',
+    entries: ['index', 'post-detail'],
+    entry: 'index',
     productId: '1368',
     debug: true,
     SDKVersion
@@ -38,7 +39,13 @@ Page({
   data: (function getInitialData(params, extra = {}) {
     return {
       ...extra,
-      ...params.reduce((acc = {}, cur) => ({ ...acc, [cur]: wx.getStorageSync(cur) || extra[cur] }), {})
+      ...params.reduce(
+        (acc = {}, cur) => ({
+          ...acc,
+          [cur]: wx.getStorageSync(cur) || extra[cur]
+        }),
+        {}
+      )
     };
   })(CONSTANT.PARAMS_INIT_FROM_STORGE, CONSTANT.PARAMS_STATIC),
   onLoad() {
@@ -50,7 +57,7 @@ Page({
     Tucao.go(this.data);
   },
   onFormChange(e) {
-    switch(e.currentTarget.id) {
+    switch (e.currentTarget.id) {
       case 'productId':
       case 'nickname':
       case 'openid':
@@ -58,14 +65,17 @@ Page({
         this.setDataAndStorge(e.currentTarget.id, e.detail.value);
         break;
       case 'getCookie':
-        if(!e.detail.value) {
+        if (!e.detail.value) {
           this.setDataAndStorge('openid', '');
           this.setDataAndStorge('nickname', '');
         }
         this.setDataAndStorge(e.currentTarget.id, e.detail.value);
         break;
       case 'entry':
-        this.setDataAndStorge(e.currentTarget.id, this.data.entries[e.detail.value]);
+        this.setDataAndStorge(
+          e.currentTarget.id,
+          this.data.entries[e.detail.value]
+        );
         break;
     }
   },

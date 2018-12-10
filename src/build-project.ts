@@ -7,14 +7,14 @@ import buildWeappWithTaro from './build-weapp-with-taro';
 import buildPluginJson from './util/build-plugin-json';
 import { RootShouldBeDelete, parseConfig } from './util';
 import chokidar from 'chokidar';
+import { config } from './constant';
+import { transform, transformSync, transformFileSync } from '@babel/core';
 
 export default function({
   watch = false,
   type = 'weapp-plugin',
   clean = false
 } = {}) {
-  const config = parseConfig();
-
   const {
     sourceRoot = '',
     outputRoot = '',
@@ -48,12 +48,18 @@ function buildWeappPlugin(options: any) {
   const {
     sourceRoot = '',
     outputRoot = '',
-    weappPlugin: { miniprogramRoot = '', docRoot = '', debugTaro = false }
+    weappPlugin: {
+      miniprogramRoot = '',
+      docRoot = '',
+      mainRoot = '',
+      debugTaro = false,
+      compile = {}
+    }
   } = config;
 
   // 暂存目录
-  const tempPath = 'temp-weapp-plugin';
-  // 输出目录在 cwd，tempDir 用于 link 源文件
+  const tempPath = '.temp-weapp-plugin';
+  // 输出目录在 cwd，tempDir 用于 link 源文件以及
   const cwd = path.join(process.cwd(), outputRoot);
   const tempDir = path.join(process.cwd(), tempPath);
 
@@ -106,6 +112,7 @@ function buildWeappPlugin(options: any) {
               from: string;
               to: string;
             }
+
             let tempList: Array<Patterns> = [];
             // doc 只能放在根目录
             if (docRoot) {
@@ -124,7 +131,8 @@ function buildWeappPlugin(options: any) {
               });
             }
 
-            if (pluginConfig.main) {
+            // 如果不需要编译，直接复制即可
+            if (!compile.main && pluginConfig.main) {
               tempList.push({
                 from: path.join('..', sourceRoot, pluginConfig.main),
                 to: path.join('..', outputRoot, 'plugin', pluginConfig.main)
@@ -150,34 +158,95 @@ module.exports = function (merge) {
 }`
   );
 
-  const weappPluginEmitter = buildWeappWithTaro({
-    args: ['build', '--type', 'weapp', '--watch'],
-    cwd: tempDir,
-    dev: debugTaro
-  });
+  // const weappPluginEmitter = buildWeappWithTaro({
+  //   args: ['build', '--type', 'weapp', '--watch'],
+  //   cwd: tempDir,
+  //   dev: debugTaro
+  // });
 
-  // TODO: 清理门户
+  // // TODO: 清理门户
 
-  // 子进程退出或 watch mode 下完成第一次构建
-  weappPluginEmitter.on('done', () => {
-    deleteBasenameStartWithApp(path.join(cwd, 'plugin'));
-  });
+  // // 子进程退出或 watch mode 下完成第一次构建
+  // weappPluginEmitter.on('done', () => {
+  //   deleteBasenameStartWithApp(path.join(cwd, 'plugin'));
+  // });
+
+  buildMainRoot();
 
   if (watch) {
-    const sourceWatcher = chokidar.watch(path.join(process.cwd(), sourceRoot), {
+    const sourceWatcher = chokidar.watch(path.join(sourceRoot), {
       ignored: /(^|[/\\])\../,
       persistent: true,
       ignoreInitial: true
     });
 
-    const outputWatcher = chokidar.watch(
-      path.join(process.cwd(), path.join(process.cwd(), outputRoot, 'plugin')),
-      {
-        ignored: /(^|[/\\])\../,
-        persistent: true,
-        ignoreInitial: true
+    // TODO: project.config, plugin.json, component watch mode
+    sourceWatcher.on('change', filePath => {
+      if (filePath === `${mainRoot}.js`) {
+        console.log(`编译  JS文件  ${mainRoot} 没事，我帮你编译`);
+        buildMainRoot();
       }
-    );
+
+      if (filePath.search(docRoot) === 0) {
+        const targetPath = path.join(
+          outputRoot,
+          'doc',
+          path.relative(docRoot, filePath)
+        );
+        console.log(`拷贝  资源  ${filePath} -> ${targetPath}`);
+        fs.copySync(filePath, targetPath);
+      }
+
+      if (filePath.search(miniprogramRoot) === 0) {
+        const targetPath = path.join(
+          outputRoot,
+          'miniprogram',
+          path.relative(miniprogramRoot, filePath)
+        );
+        console.log(`拷贝  资源  ${filePath} -> ${targetPath}`);
+        fs.copySync(filePath, targetPath);
+      }
+    });
+
+    const outputWatcher = chokidar.watch(path.join(outputRoot), {
+      ignored: /(^|[/\\])\../,
+      persistent: true,
+      ignoreInitial: true
+    });
+
+    outputWatcher.on('change', filePath => {
+      //  同步 project.config.plugin.json
+      if (filePath.search(path.join(outputRoot, 'project.config.json')) === 0) {
+        const {
+          projectname,
+          description,
+          appid,
+          setting,
+          condition
+        } = JSON.parse(fs.readFileSync(filePath).toString());
+        const originConfig = JSON.parse(
+          fs
+            .readFileSync(path.join(sourceRoot, 'project.config.plugin.json'))
+            .toString()
+        );
+
+        fs.outputFileSync(
+          path.join(sourceRoot, 'project.config.plugin.json'),
+          JSON.stringify(
+            {
+              ...originConfig,
+              projectname,
+              description,
+              appid,
+              setting,
+              condition
+            },
+            null,
+            4
+          )
+        );
+      }
+    });
   }
 }
 
@@ -195,4 +264,26 @@ function deleteBasenameStartWithApp(PATH: string) {
       fs.remove(OUTPUT_DELETE_PATH);
     }
   });
+}
+
+function buildMainRoot() {
+  const {
+    outputRoot = '',
+    weappPlugin: { mainRoot = '', compile = {} }
+  } = config;
+
+  // 编译 main
+  if (compile.main) {
+    const result = transformFileSync(`${mainRoot}.js`, {
+      presets: [
+        [
+          require('@babel/preset-env'),
+          {
+            targets: ['last 2 versions', 'Android >= 4.2', 'iOS 9']
+          }
+        ]
+      ]
+    });
+    fs.outputFileSync(path.join(outputRoot, 'plugin', 'index.js'), result.code);
+  }
 }

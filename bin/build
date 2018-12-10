@@ -9,7 +9,7 @@ program
     .option('-w, --watch', 'Watch mode')
     .option('-e, --env [env]', 'Env type')
     .option('-u, --ui', 'Build Taro UI library')
-    .option('-c, --clean', 'Build Taro UI library')
+    .option('-c, --clean', 'should clean the output Directory')
     .parse(process.argv);
 
 /**

@@ -8,7 +8,7 @@ const {
 const path = require('path');
 const _ = require('lodash');
 
-const config = require(rootPath(`./config/index`))(_.merge);
+export const config = require(rootPath(`./config/index`))(_.merge);
 
 const {
 	sourceRoot,

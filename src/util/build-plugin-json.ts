@@ -1,11 +1,12 @@
 /**
  * Created by v_sameli on 2018/11/6.
  */
-const path = require("path");
-const fs = require("fs-extra");
-const parse = require("@babel/parser").parse;
-const traverse = require("@babel/traverse").default;
-const t = require("@babel/types");
+import path from 'path';
+import fs from 'fs-extra';
+const parse = require('@babel/parser').parse;
+const traverse = require('@babel/traverse').default;
+const t = require('@babel/types');
+import { config } from '../constant';
 
 /**
  * 读取 SOURCE_PATH 目录下的 app.js，解析出类中含有静态属性 config，并在 OUTPUT_PATH 下生成 plugin.json
@@ -15,21 +16,21 @@ export default function buildPluginJson(
   SOURCE_PATH: string,
   OUTPUT_PATH: string
 ) {
-  const code = fs.readFileSync(path.join(SOURCE_PATH, "./app.js"));
+  const code = fs.readFileSync(path.join(SOURCE_PATH, './app.js'));
   const ast = parse(code.toString(), {
-    sourceType: "module",
+    sourceType: 'module',
     plugins: [
-      "classProperties",
-      "jsx",
-      "flow",
-      "flowComment",
-      "trailingFunctionCommas",
-      "asyncFunctions",
-      "exponentiationOperator",
-      "asyncGenerators",
-      "objectRestSpread",
-      ["decorators", { decoratorsBeforeExport: false }],
-      "dynamicImport"
+      'classProperties',
+      'jsx',
+      'flow',
+      'flowComment',
+      'trailingFunctionCommas',
+      'asyncFunctions',
+      'exponentiationOperator',
+      'asyncGenerators',
+      'objectRestSpread',
+      ['decorators', { decoratorsBeforeExport: false }],
+      'dynamicImport'
     ]
   });
 
@@ -42,7 +43,7 @@ export default function buildPluginJson(
   traverse(ast, {
     ClassProperty(astPath: any) {
       const node = astPath.node;
-      if (node.key.name === "config") {
+      if (node.key.name === 'config') {
         configObj = traverseObjectNode(node);
       }
     }
@@ -56,11 +57,25 @@ export default function buildPluginJson(
     pages: getPageName(configObj.pages)
   };
 
+  if (
+    config.weappPlugin.mainRoot &&
+    !fs.existsSync(`${config.weappPlugin.mainRoot}.js`)
+  ) {
+    throw new Error(
+      `weappPlugin#mainRoot: ${config.weappPlugin.mainRoot} 不存在`
+    );
+  }
+
+  // TODO: publicComponents 未做额外处理
   fs.outputFileSync(
-    path.join(OUTPUT_PATH, "./plugin.json"),
+    path.join(OUTPUT_PATH, './plugin.json'),
     JSON.stringify(
       {
-        main: pluginConfigObj.main,
+        // 先假设没有后缀名
+        main: `${path.relative(
+          config.sourceRoot,
+          config.weappPlugin.mainRoot
+        )}.js`,
         pages: pluginConfigObj.pages,
         publicComponents: pluginConfigObj.publicComponents
       },
@@ -84,9 +99,9 @@ function getPageName(pages: string[] = []) {
   const pageFormat: any = {};
 
   pages.forEach(e => {
-    let key = e.split("/").slice(-1)[0];
-    if (key === "index") {
-      key = e.split("/").slice(-2, -1)[0];
+    let key = e.split('/').slice(-1)[0];
+    if (key === 'index') {
+      key = e.split('/').slice(-2, -1)[0];
     }
     pageFormat[key] = e;
   });
@@ -99,7 +114,7 @@ function getPageName(pages: string[] = []) {
  * 用于解析 config
  * */
 function traverseObjectNode(node: any, obj?: any) {
-  if (node.type === "ClassProperty" || node.type === "ObjectProperty") {
+  if (node.type === 'ClassProperty' || node.type === 'ObjectProperty') {
     const properties = node.value.properties;
     obj = {};
     properties.forEach((p: any) => {
@@ -108,7 +123,7 @@ function traverseObjectNode(node: any, obj?: any) {
     });
     return obj;
   }
-  if (node.type === "ObjectExpression") {
+  if (node.type === 'ObjectExpression') {
     const properties = node.properties;
     obj = {};
     properties.forEach(p => {
@@ -117,10 +132,10 @@ function traverseObjectNode(node: any, obj?: any) {
     });
     return obj;
   }
-  if (node.type === "ArrayExpression") {
+  if (node.type === 'ArrayExpression') {
     return node.elements.map((item: any) => traverseObjectNode(item));
   }
-  if (node.type === "NullLiteral") {
+  if (node.type === 'NullLiteral') {
     return null;
   }
   return node.value;
