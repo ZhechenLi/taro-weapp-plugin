@@ -8,7 +8,11 @@ import buildPluginJson from './util/build-plugin-json';
 import { RootShouldBeDelete, parseConfig } from './util';
 import chokidar from 'chokidar';
 import { config } from './constant';
-import { transform, transformSync, transformFileSync } from '@babel/core';
+import * as babel from '@babel/core';
+import * as parser from '@babel/parser';
+import traverse from '@babel/traverse';
+import * as t from '@babel/types';
+import generate from '@babel/generator';
 
 export default function({
   watch = false,
@@ -93,83 +97,113 @@ function buildWeappPlugin(options: any) {
     path.join(cwd, 'plugin')
   );
 
-  // 生成新的 config, cwd 为 .temp-weapp-plugin
-  fs.outputFileSync(
-    path.join(tempDir, 'config/index.js'),
-    `const config = ${JSON.stringify(
-      {
-        ...config,
-        sourceRoot: path.join(
-          path.relative(tempPath, process.cwd()),
-          sourceRoot
-        ),
-        outputRoot: path.join('..', outputRoot, 'plugin'),
-        // 由于工作目录发生变动，这里会找不到需要拷贝的目标路径
-        copy: {
-          ...config.copy,
-          patterns: (() => {
-            interface Patterns {
-              from: string;
-              to: string;
-            }
+  {
+    // 将 config 目录复制过来
+    fs.copySync('./config', path.join(tempDir, './config'));
+    interface Patterns {
+      from: string;
+      to: string;
+    }
 
-            let tempList: Array<Patterns> = [];
-            // doc 只能放在根目录
-            if (docRoot) {
-              tempList.push({
-                from: path.join('..', docRoot),
-                to: path.join('..', outputRoot, 'doc')
-              });
-            }
+    const tempRelate2Cwd = path.relative(tempPath, process.cwd());
 
-            // 生成 miniprogram
-            // TODO: miniprogram 默认是不编译的
-            if (miniprogramRoot) {
-              tempList.push({
-                from: path.join('..', miniprogramRoot),
-                to: path.join('..', outputRoot, 'miniprogram')
-              });
-            }
+    const newSourceRoot = path.join(tempRelate2Cwd, sourceRoot);
 
-            // 如果不需要编译，直接复制即可
-            if (!compile.main && pluginConfig.main) {
-              tempList.push({
-                from: path.join('..', sourceRoot, pluginConfig.main),
-                to: path.join('..', outputRoot, 'plugin', pluginConfig.main)
-              });
-            }
+    const newOutputRoot = path.join(tempRelate2Cwd, outputRoot, 'plugin');
 
-            return [
-              ...config.copy.patterns.map(e => ({
-                ...e,
-                from: path.join('..', e.from)
-              })),
-              ...tempList
-            ];
-          })()
+    // templList 用于 copy。由于工作路径会切换，原有的 copy 需要调整路径
+    let tempList: Array<Patterns> = config.copy.patterns.map(e => ({
+      ...e,
+      from: path.join('..', e.from)
+    }));
+
+    // doc 只能放在根目录
+    if (docRoot) {
+      tempList.push({
+        from: path.join(tempRelate2Cwd, docRoot),
+        to: path.join(tempRelate2Cwd, outputRoot, 'doc')
+      });
+    }
+
+    // 生成 miniprogram
+    // TODO: miniprogram 默认是不编译的
+    if (miniprogramRoot) {
+      tempList.push({
+        from: path.join(tempRelate2Cwd, miniprogramRoot),
+        to: path.join(tempRelate2Cwd, outputRoot, 'miniprogram')
+      });
+    }
+
+    // 如果不需要编译，直接复制即可
+    if (!compile.main && pluginConfig.main) {
+      tempList.push({
+        from: path.join(tempRelate2Cwd, sourceRoot, pluginConfig.main),
+        to: path.join(tempRelate2Cwd, outputRoot, 'plugin', pluginConfig.main)
+      });
+    }
+
+    //  config Text 不能直接当字符串写入，因为可能存在函数作为对象值
+    const configText = fs
+      .readFileSync(path.resolve(`./config/index.js`))
+      // .readFileSync(path.resolve(`./config/test-scope.js`))
+      .toString();
+
+    const ast = parser.parse(configText);
+    traverse(ast, {
+      ObjectProperty(path) {
+        const nodeName = path.node.key.name || path.node.key.value;
+        if (nodeName === 'copy') {
+          path.traverse({
+            ObjectProperty(path) {
+              const nodeName = path.node.key.name || path.node.key.value;
+
+              //
+              if (nodeName === 'patterns') {
+                const temp = tempList.map(({ from, to }) => {
+                  return t.objectExpression([
+                    t.objectProperty(
+                      t.identifier('from'),
+                      t.stringLiteral(from)
+                    ),
+                    t.objectProperty(t.identifier('to'), t.stringLiteral(to))
+                  ]);
+                });
+
+                path.node.value.elements = [
+                  ...path.node.value.elements,
+                  ...temp
+                ];
+              }
+            }
+          });
         }
-      },
-      null,
-      4
-    )}
 
-module.exports = function (merge) {
-    return config
-}`
-  );
+        if (nodeName === 'sourceRoot') {
+          path.node.value = t.stringLiteral(newSourceRoot);
+        }
 
-  // const weappPluginEmitter = buildWeappWithTaro({
-  //   args: ['build', '--type', 'weapp', '--watch'],
-  //   cwd: tempDir,
-  //   dev: debugTaro
-  // });
+        if (nodeName === 'outputRoot') {
+          path.node.value = t.stringLiteral(newOutputRoot);
+        }
+      }
+    });
 
-  // // TODO: 清理门户
+    const { code } = generate(ast, configText);
+    fs.outputFileSync(path.join(tempDir, 'config/index.js'), code);
+  }
 
-  // // 子进程退出或 watch mode 下完成第一次构建
-  // weappPluginEmitter.on('done', () => {
-  //   deleteBasenameStartWithApp(path.join(cwd, 'plugin'));
-  // });
+  const weappPluginEmitter = buildWeappWithTaro({
+    args: ['build', '--type', 'weapp', '--watch'],
+    cwd: tempDir,
+    dev: debugTaro
+  });
+
+  // TODO: 清理门户
+
+  // 子进程退出或 watch mode 下完成第一次构建
+  weappPluginEmitter.on('done', () => {
+    deleteBasenameStartWithApp(path.join(cwd, 'plugin'));
+  });
 
   buildMainRoot();
 
@@ -274,7 +308,7 @@ function buildMainRoot() {
 
   // 编译 main
   if (compile.main) {
-    const result = transformFileSync(`${mainRoot}.js`, {
+    const result = babel.transformFileSync(`${mainRoot}.js`, {
       presets: [
         [
           require('@babel/preset-env'),
@@ -287,3 +321,5 @@ function buildMainRoot() {
     fs.outputFileSync(path.join(outputRoot, 'plugin', 'index.js'), result.code);
   }
 }
+
+function buildTempConfig() {}

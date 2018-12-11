@@ -34,7 +34,7 @@ export default function buildWeappWithTaro(
     stdio: 'pipe'
   }
 ) {
-  console.log(cwd);
+  // console.log(cwd);
   env = {
     ...env,
     FORCE_COLOR: 'true'
@@ -67,8 +67,6 @@ export default function buildWeappWithTaro(
       if (data.toString().search('监听文件修改中') !== -1) {
         taroEmitter.emit('done');
       }
-
-      console.log(data.toString().trim());
     });
 
     cp.stderr.on('data', (data: Uint8Array) => {

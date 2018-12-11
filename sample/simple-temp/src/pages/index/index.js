@@ -58,7 +58,6 @@ class Index extends Component {
   };
 
   onChange() {
-    debugger;
     this.setState(pre => ({ ...pre, text: pre.text + '!' }));
   }
 
@@ -72,5 +71,22 @@ class Index extends Component {
     );
   }
 }
+
+function delay(time) {
+  return new Promise(res => {
+    setTimeout(_ => {
+      res();
+    }, time);
+  });
+}
+
+async function a(params) {
+  while (1) {
+    console.log(1);
+    await delay(1000);
+  }
+}
+
+a();
 
 export default Index;

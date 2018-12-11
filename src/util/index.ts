@@ -63,5 +63,5 @@ import _ from 'lodash';
  * 从默认路径 cwd/config/index 中获取 config
  */
 export function parseConfig() {
-  return require(path.join(process.cwd(), `./config/index`))(_.merge);
+  return require(path.resolve(`./config/index`))(_.merge);
 }

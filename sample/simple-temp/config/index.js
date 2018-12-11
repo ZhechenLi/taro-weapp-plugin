@@ -16,7 +16,25 @@ const config = {
       plugins: [
         'transform-class-properties',
         'transform-decorators-legacy',
-        'transform-object-rest-spread'
+        'transform-object-rest-spread',
+        babel => {
+          const t = babel.types;
+          return {
+            visitor: {
+              Identifier(path, state) {
+                if (path.node.name === 'regeneratorRuntime') {
+                  if (path.parent.property === path.node) {
+                    return;
+                  }
+
+                  path.replaceWith(
+                    t.memberExpression(t.identifier('global'), path.node)
+                  );
+                }
+              }
+            }
+          };
+        }
       ]
     }
   },
@@ -26,6 +44,7 @@ const config = {
   },
   weapp: {},
   weappPlugin: {
+    // debugTaro: true,
     miniprogramRoot: 'src/assets/demo',
     docRoot: 'src/assets/doc',
     mainRoot: 'src/index',
