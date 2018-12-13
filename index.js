@@ -3,5 +3,3 @@
  */
 module.exports.buildWeAppPlugin = require('./lib/build-project');
 module.exports.buildWeappWithTaro = require('./lib/build-weapp-with-taro');
-
-console.log(123);
