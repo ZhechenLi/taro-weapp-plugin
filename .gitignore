@@ -1,1 +1,5 @@
 sample/**/temp/*
+**/lib
+.vscode
+yarn.lock
+sample/simple-temp/.temp-weapp-plugin

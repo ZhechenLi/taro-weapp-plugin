@@ -1,36 +1,32 @@
-import '@tarojs/async-await'
-import Taro, { Component } from '@tarojs/taro'
-import { Provider } from '@tarojs/redux'
+import '@tarojs/async-await';
+import Taro, { Component } from '@tarojs/taro';
+import { Provider } from '@tarojs/redux';
 
-import Index from './pages/index'
+import Index from './pages/index';
 
-import configStore from './store'
+import configStore from './store';
 
-import './app.scss'
+import './app.scss';
 
-const store = configStore()
+const store = configStore();
 
 class App extends Component {
-
   config = {
-    pages: [
-      'pages/index/index'
-    ],
+    pages: ['pages/index/index'],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
       navigationBarTitleText: 'WeChat',
       navigationBarTextStyle: 'black'
-    }
-  }
+    },
+    main: 'index.js'
+  };
 
   componentWillMount() {
     console.log(this.$router.params);
   }
 
-
-
-  globalData = 'I am global data'
+  globalData = 'I am global data';
 
   // componentDidMount() {
   //   console.log(this.$router.params)
@@ -44,8 +40,8 @@ class App extends Component {
       <Provider store={store}>
         <Index />
       </Provider>
-    )
+    );
   }
 }
 
-Taro.render(<App />, document.getElementById('app'))
+Taro.render(<App />, document.getElementById('app'));

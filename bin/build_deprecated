@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+/**
+ * @Deprecated
+ */
+
+const program = require('commander');
+const buildWeAppPlugin = require('../lib/build-weapp-plugin');
+const buildWeappWithTaro = require('../lib/build-weapp-with-taro');
+
+program
+    .option('-t,--type [typeName]', 'Build type, weapp/rn/h5 [weapp]', 'weapp')
+    .option('-w, --watch', 'Watch mode')
+    .option('-e, --env [env]', 'Env type')
+    .option('-u, --ui', 'Build Taro UI library')
+    .parse(process.argv);
+
+buildWeAppPlugin(program);

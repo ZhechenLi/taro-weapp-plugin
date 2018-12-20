@@ -4,7 +4,15 @@
   "description": "针对 taro 开发小程序插件封装的一些脚手架，用于抹平 taro 开发小程序及小程序插件的环境差异",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "npm run type-check -- --watch",
+    "build": "npm run build:types && npm run build:js",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:js": "babel src --out-dir lib --extensions \".ts,.tsx\" --source-maps inline",
+    "dev:js": "npm run build:js -- -w",
+    "dev:types": "npm run build:types -- -w",
+    "dev": "npm run dev:types & npm run dev:js"
   },
   "bin": {
     "cli": "bin/build"
@@ -28,6 +36,9 @@
     "@tarojs/cli": "^1.1.4",
     "@tarojs/redux": "^1.2.0-beta.1",
     "@tarojs/taro-weapp": "^1.2.0-beta.1",
+    "@types/fs-extra": "^5.0.4",
+    "@types/lodash": "^4.14.118",
+    "@types/node": "^10.12.11",
     "chokidar": "^2.0.4",
     "commander": "^2.19.0",
     "fs-extra": "^7.0.1",
@@ -35,6 +46,14 @@
     "lodash": "^4.17.11"
   },
   "devDependencies": {
-    "@tarojs/plugin-babel": "^1.2.0-beta.1"
+    "@tarojs/plugin-babel": "^1.2.0-beta.1",
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.6",
+    "@babel/node": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.1.0"
   }
 }

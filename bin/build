@@ -1,14 +1,20 @@
 #!/usr/bin/env node
 
 const program = require('commander');
-const buildWeAppPlugin = require('../lib/build-weapp-plugin');
-const buildWeappWithTaro = require('../lib/build-weapp-with-taro');
+const buildProject = require('../lib/build-project').default;
+
 
 program
-.option('-t,--type [typeName]', 'Build type, weapp/rn/h5 [weapp]', 'weapp')
-.option('-w, --watch', 'Watch mode')
-.option('-e, --env [env]', 'Env type')
-.option('-u, --ui', 'Build Taro UI library')
-.parse(process.argv);
+    .option('-t,--type [typeName]', 'Build type, weapp/rn/h5 [weapp]', 'weapp')
+    .option('-w, --watch', 'Watch mode')
+    .option('-e, --env [env]', 'Env type')
+    .option('-u, --ui', 'Build Taro UI library')
+    .option('-c, --clean', 'should clean the output Directory')
+    .parse(process.argv);
 
-buildWeAppPlugin(program);
+/**
+ * 1. 同一份代码根据 config 生成两个项目目录，分别对应 weapp ,weapp-plugin
+ * 2. weapp 走原生 taro 编译，weapp-plugin 走 taro-weapp-plugin，注意要生成对应的 project.config.js
+ * */
+
+buildProject(program)

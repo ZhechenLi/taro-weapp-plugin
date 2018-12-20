@@ -1,15 +1,15 @@
-import Taro, { Component } from '@tarojs/taro'
-import { View, Button, Text } from '@tarojs/components'
-import { connect } from '@tarojs/redux'
+import Taro, { Component } from '@tarojs/taro';
+import { View, Button, Text } from '@tarojs/components';
+import { connect } from '@tarojs/redux';
 
-import { add, minus, asyncAdd } from '../../actions/counter'
+import { add, minus, asyncAdd } from '../../actions/counter';
 
-import './index.scss'
+import './index.scss';
 
-import MyButton from '../../component/MyButton'
-import List from '../../component/List'
+import MyButton from '../../component/MyButton';
+import List from '../../component/List';
 
-import './temp.jpg'
+import './temp.jpg';
 
 // class MyButton extends Component {
 
@@ -41,42 +41,52 @@ import './temp.jpg'
 class Index extends Component {
   static defaultProps = {
     a: 1,
-    b: () => { },
-    c() {
-
-    }
-  }
+    b: () => {},
+    c() {}
+  };
 
   config = {
     navigationBarTitleText: '首页'
-  }
+  };
 
   componentDidMount() {
-    console.log(this)
+    console.log(this);
   }
 
   state = {
     text: 'Hello world'
-  }
+  };
 
   onChange() {
-    debugger
-    this.setState(pre => ({ ...pre, text: pre.text + '!' }))
+    this.setState(pre => ({ ...pre, text: pre.text + '!' }));
   }
 
   render() {
-    console.log(this.props)
+    console.log(this.props);
     return (
-      <View className='index'>
+      <View className="index">
         <Button onClick={this.onChange}>+</Button>
-        <Text>
-          {this.state.text}
-        </Text>
+        <Text>{this.state.text}</Text>
       </View>
-    )
+    );
   }
 }
 
+function delay(time) {
+  return new Promise(res => {
+    setTimeout(_ => {
+      res();
+    }, time);
+  });
+}
 
+async function a(params) {
+  while (1) {
+    console.log(1);
+    await delay(1000);
+  }
+}
 
-export default Index
+a();
+
+export default Index;

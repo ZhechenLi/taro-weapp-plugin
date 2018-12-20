@@ -1,0 +1,24 @@
+<form>
+  <picker id="entry" bindchange="onFormChange" value="{{0}}" range="{{entries}}">
+    <view class="picker">
+      <label for="entry">需要跳转的页面: {{entry||"index"}}</label>
+    </view>
+  </picker>
+  <label for="productId">产品 id</label>
+  <input id="productId" value="{{productId}}" bindinput="onFormChange"></input>
+  <label for="postId">帖子 id</label>
+  <input id="postId" value="{{postId}}" bindinput="onFormChange"></input>
+  <switch id="getCookie" checked="{{getCookie}}" bindchange="onFormChange" />
+  第三方登录
+  <view wx:if="{{getCookie}}">
+    <label for="nickname">昵称</label>
+    <input id="nickname" value="{{nickname}}" bindinput="onFormChange"></input>
+    <label for="openid">openid</label>
+    <input id="openid" value="{{openid}}" bindinput="onFormChange"></input>
+  </view>
+</form>
+<navigator url="{{url}}">
+  <button class="nav">Go to {{entry||"home"}} by navigator 组件</button>
+</navigator>
+<button class="nav" bindtap="go">Go to {{entry||"home"}} by Tucao#go API</button>
+微信基础库版本：{{SDKVersion}}
