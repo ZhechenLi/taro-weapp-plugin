@@ -13,8 +13,15 @@ import * as parser from '@babel/parser';
 import traverse from '@babel/traverse';
 import * as t from '@babel/types';
 import generate from '@babel/generator';
-import astConvert from '@tarojs/cli/src/util/ast_convert';
 import template from '@babel/template';
+
+interface PackageJsonOptions {
+  version?: string;
+  fullMetadata?: boolean;
+  allVersions?: boolean;
+}
+
+const packageJson : PackageJsonOptions= require(path.resolve(`./package.json`));
 
 export default function({
   watch = false,
@@ -52,6 +59,7 @@ function buildWeappPlugin(options: any) {
   const {
     sourceRoot = '',
     outputRoot = '',
+    projectName,
     weappPlugin: {
       miniprogramRoot = '',
       docRoot = '',
@@ -74,6 +82,10 @@ function buildWeappPlugin(options: any) {
 
   fs.ensureDirSync(cwd);
 
+  let projectConfigProjectname:string = projectName;
+  if(projectConfigProjectname.search(`tucao`) !== -1){
+    projectConfigProjectname += `__${packageJson.version}`
+  }
   // 生成 project.config.json 并输出
   const projectConfig: any = {
     ...JSON.parse(
@@ -81,6 +93,7 @@ function buildWeappPlugin(options: any) {
         .readFileSync(path.join(sourceRoot, 'project.config.plugin.json'))
         .toString()
     ),
+    projectname: projectConfigProjectname,
     compileType: 'plugin',
     pluginRoot: 'plugin',
     miniprogramRoot: 'miniprogram'
@@ -242,7 +255,7 @@ function buildWeappPlugin(options: any) {
   buildMainRoot();
 
   if (watch) {
-    const sourceWatcher = chokidar.watch(path.join(sourceRoot), {
+    const sourceWatcher = chokidar.watch([path.join(sourceRoot), miniprogramRoot], {
       ignored: /(^|[/\\])\../,
       persistent: true,
       ignoreInitial: true
@@ -254,12 +267,17 @@ function buildWeappPlugin(options: any) {
       console.log(filePath, `${sourceRoot}/app.js`)
       // app.js 变动时更新 plugin.json
       if(filePath === `${sourceRoot}/app.js`){
-        buildPluginJson(
+      
+        // TODO: pages 更新时对应的文件也要删掉
+        const nextPluginJson = buildPluginJson(
           path.join(process.cwd(), sourceRoot),
           path.join(cwd, 'plugin')
         );
+
+        
       }
 
+      console.log(filePath)
       if (filePath === `${mainRoot}.js`) {
         console.log(`编译  JS文件  ${mainRoot} 没事，我帮你编译`);
         buildMainRoot();

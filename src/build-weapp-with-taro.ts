@@ -43,6 +43,7 @@ export default function buildWeappWithTaro(
   const taroEmitter = new EventEmitter();
 
   if (dev) {
+    // TODO: 这种方式可能会导致 taro-cli 的版本不一致
     const cp = spawn(
       'node',
       // process.argv.slice(process.argv.findIndex(e => e === 'build')),
@@ -107,7 +108,7 @@ export default function buildWeappWithTaro(
     });
 
     cp.on('close', (code: number) => {
-      console.log(`子进程退出码：${code}`);
+      // console.log(`子进程退出码：${code}`);
       taroEmitter.emit('done');
     });
   }
