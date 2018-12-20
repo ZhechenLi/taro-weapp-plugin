@@ -1,8 +1,15 @@
 {
   "name": "taro-weapp-plugin",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "针对 taro 开发小程序插件封装的一些脚手架，用于抹平 taro 开发小程序及小程序插件的环境差异",
   "main": "index.js",
+  "files": [
+    "dist",
+    "src",
+    "index.js",
+    "types",
+    "package.json"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "type-check": "tsc --noEmit",
@@ -22,7 +29,7 @@
     "url": "git+https://github.com/ZhechenLi/taro-weapp-plugin.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "tsesamli",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ZhechenLi/taro-weapp-plugin/issues"
