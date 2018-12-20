@@ -47,7 +47,7 @@ export default function buildWeappWithTaro(
       'node',
       // process.argv.slice(process.argv.findIndex(e => e === 'build')),
       [
-        '--inspect-brk=9221',
+        '--inspect-brk=9222',
         path.join(process.cwd(), './node_modules/@tarojs/cli/bin/taro-build'),
         ...args
       ],
@@ -70,7 +70,7 @@ export default function buildWeappWithTaro(
     });
 
     cp.stderr.on('data', (data: Uint8Array) => {
-      console.log(`stderr: ${data}`);
+      console.log(`stderr: ${data}`, data.toString());
     });
 
     cp.on('close', (code: number) => {

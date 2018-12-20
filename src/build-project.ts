@@ -13,6 +13,8 @@ import * as parser from '@babel/parser';
 import traverse from '@babel/traverse';
 import * as t from '@babel/types';
 import generate from '@babel/generator';
+import astConvert from '@tarojs/cli/src/util/ast_convert';
+import template from '@babel/template';
 
 export default function({
   watch = false,
@@ -29,16 +31,14 @@ export default function({
     throw new Error('不要放在 dist');
   }
 
-  if (type === 'weapp-plugin') {
-    buildWeappPlugin({
-      watch,
-      sourceRoot,
-      outputRoot,
-      clean,
-      miniprogramRoot,
-      docRoot
-    });
-  }
+  buildWeappPlugin({
+    watch,
+    sourceRoot,
+    outputRoot,
+    clean,
+    miniprogramRoot,
+    docRoot
+  });
 }
 
 /**
@@ -185,6 +185,36 @@ function buildWeappPlugin(options: any) {
         if (nodeName === 'outputRoot') {
           path.node.value = t.stringLiteral(newOutputRoot);
         }
+
+        if (nodeName === 'babel') {
+          path.traverse({
+            ObjectProperty(path) {
+              if (path.node.key.name === 'plugins') {
+                path.node.value.elements.push(
+                  parser.parseExpression(`
+                babel => {
+                  const t = babel.types;
+                  return {
+                    visitor: {
+                      Identifier(path, state) {
+                        if (path.node.name === 'regeneratorRuntime') {
+                          if (path.parent.property === path.node) {
+                            return;
+                          }
+                          path.replaceWith(
+                            t.memberExpression(t.identifier('global'), path.node)
+                          );
+                        }
+                      }
+                    }
+                  };
+                }
+                `)
+                );
+              }
+            }
+          });
+        }
       }
     });
 
@@ -192,8 +222,12 @@ function buildWeappPlugin(options: any) {
     fs.outputFileSync(path.join(tempDir, 'config/index.js'), code);
   }
 
+  let taroArgs = ['build', '--type', 'weapp'];
+  if(watch){
+    taroArgs.push('--watch')
+  }
   const weappPluginEmitter = buildWeappWithTaro({
-    args: ['build', '--type', 'weapp', '--watch'],
+    args: taroArgs,
     cwd: tempDir,
     dev: debugTaro
   });
@@ -216,6 +250,16 @@ function buildWeappPlugin(options: any) {
 
     // TODO: project.config, plugin.json, component watch mode
     sourceWatcher.on('change', filePath => {
+ 
+      console.log(filePath, `${sourceRoot}/app.js`)
+      // app.js 变动时更新 plugin.json
+      if(filePath === `${sourceRoot}/app.js`){
+        buildPluginJson(
+          path.join(process.cwd(), sourceRoot),
+          path.join(cwd, 'plugin')
+        );
+      }
+
       if (filePath === `${mainRoot}.js`) {
         console.log(`编译  JS文件  ${mainRoot} 没事，我帮你编译`);
         buildMainRoot();
@@ -249,6 +293,8 @@ function buildWeappPlugin(options: any) {
     });
 
     outputWatcher.on('change', filePath => {
+
+      // deleteBasenameStartWithApp(path.join(cwd, 'plugin'));
       //  同步 project.config.plugin.json
       if (filePath.search(path.join(outputRoot, 'project.config.json')) === 0) {
         const {
